@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialCartState = {
   products: [],
   showCart: true,
+  hasChanged: false,
 };
 
 const cartSlice = createSlice({
@@ -10,6 +11,8 @@ const cartSlice = createSlice({
   initialState: initialCartState,
   reducers: {
     add: (state, action) => {
+      state.hasChanged = true;
+
       const product = action.payload;
 
       const isProductExist = state.products.find(
@@ -26,11 +29,15 @@ const cartSlice = createSlice({
       }
     },
     remove: (state, action) => {
+      state.hasChanged = true;
+
       const product = action.payload;
 
       state.products = state.products.filter((item) => item.id !== product.id);
     },
     increment: (state, action) => {
+      state.hasChanged = true;
+
       const index = state.products.findIndex(
         (item) => item.id === action.payload.id
       );
@@ -42,6 +49,8 @@ const cartSlice = createSlice({
       }
     },
     decrement: (state, action) => {
+      state.hasChanged = true;
+
       const index = state.products.findIndex(
         (item) => item.id === action.payload.id
       );
@@ -58,10 +67,15 @@ const cartSlice = createSlice({
     toggleCart: (state) => {
       state.showCart = !state.showCart;
     },
+
+    replaceCart: (state, action) => {
+      state.products = action.payload.products || [];
+      state.showCart = action.payload.showCart;
+    },
   },
 });
 
 export default cartSlice;
 
-export const { add, remove, increment, decrement, toggleCart } =
+export const { add, remove, increment, decrement, toggleCart, replaceCart } =
   cartSlice.actions;
